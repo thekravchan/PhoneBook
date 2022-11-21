@@ -5,8 +5,8 @@ public class Record {
     private String phone;
 
     public Record(String name, String phone) {
-        this.name = name;
-        this.phone = phone;
+        setName(name);
+        setPhone(phone);
     }
 
     public String getName() {
@@ -18,11 +18,23 @@ public class Record {
     }
 
     public void setName(String name) {
+        if (!validateName(name))
+            throw new IllegalArgumentException("Illegal name format!");
         this.name = name;
     }
 
     public void setPhone(String phone) {
+        if (!validatePhone(phone))
+            throw new IllegalArgumentException("Illegal phone format!");
         this.phone = phone;
+    }
+
+    private static boolean validatePhone(String phone){
+        return phone.matches("^\\+\\d{11}$");
+    }
+
+    private static boolean validateName(String name){
+        return name.matches("^([A-Z][a-z]+)( [A-Z][a-z]+)?$");
     }
 
     @Override
