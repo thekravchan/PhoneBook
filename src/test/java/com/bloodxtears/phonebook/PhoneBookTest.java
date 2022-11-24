@@ -100,16 +100,16 @@ class PhoneBookTest {
         if (!tempFile.delete())
             tempFile.deleteOnExit();
 
-        String actual = new String(encoded, StandardCharsets.UTF_8);
-        String expected = "[ {\r\n" +
-                "  \"name\" : \"Andrey\",\r\n" +
-                "  \"phone\" : \"+21111111111\"\r\n" +
-                "}, {\r\n" +
-                "  \"name\" : \"Danil\",\r\n" +
-                "  \"phone\" : \"+11111111111\"\r\n" +
-                "}, {\r\n" +
-                "  \"name\" : \"Danil\",\r\n" +
-                "  \"phone\" : \"+11111111112\"\r\n" +
+        String actual = new String(encoded, StandardCharsets.UTF_8).replace("\r","");
+        String expected = "[ {\n" +
+                "  \"name\" : \"Andrey\",\n" +
+                "  \"phone\" : \"+21111111111\"\n" +
+                "}, {\n" +
+                "  \"name\" : \"Danil\",\n" +
+                "  \"phone\" : \"+11111111111\"\n" +
+                "}, {\n" +
+                "  \"name\" : \"Danil\",\n" +
+                "  \"phone\" : \"+11111111112\"\n" +
                 "} ]";
         Assertions.assertEquals(expected, actual);
     }
