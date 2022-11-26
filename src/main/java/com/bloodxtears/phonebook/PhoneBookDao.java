@@ -3,6 +3,7 @@ package com.bloodxtears.phonebook;
 import com.bloodxtears.phonebook.models.Record;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,23 +11,21 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-public class PhoneBook {
+@Component
+public class PhoneBookDao {
     private final Map<String, Set<String>> phoneBook;
 
-    public PhoneBook() {
+    public PhoneBookDao() {
         phoneBook = new TreeMap<>();
     }
 
     public void add(Record record){
+        if (this.contains(record))
+            throw new IllegalArgumentException("Record already exist!");
+
         if (!phoneBook.containsKey(record.getName()))
             phoneBook.put(record.getName(), new HashSet<>());
-
         phoneBook.get(record.getName()).add(record.getPhone());
-    }
-
-    public void remove(Record record){
-        if (this.contains(record))
-            this.phoneBook.get(record.getName()).remove(record.getPhone());
     }
 
     public void edit(Record currentRecord, Record updatedRecord){
@@ -40,11 +39,17 @@ public class PhoneBook {
         }
     }
 
+    public void remove(Record record){
+        if (!this.contains(record))
+            throw new IllegalArgumentException("Not found!");
+        this.phoneBook.get(record.getName()).remove(record.getPhone());
+    }
+
     public void clear(){
         phoneBook.clear();
     }
 
-    public ArrayList<Record> getRecords(String name, String phone) {
+    public ArrayList<Record> get(String name, String phone) {
         ArrayList<Record> records = new ArrayList<>();
 
         for (Map.Entry<String, Set<String>> item : phoneBook.entrySet()) {
@@ -59,12 +64,13 @@ public class PhoneBook {
     public void writeFile(File file) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        writer.write(ow.writeValueAsString(this.getRecords("", "")));
+        writer.write(ow.writeValueAsString(this.get("", "")));
         writer.close();
     }
 
     public boolean contains(Record record){
-        return phoneBook.containsKey(record.getName()) &&
+        return record != null &&
+                phoneBook.containsKey(record.getName()) &&
                 this.phoneBook.get(record.getName()).contains(record.getPhone());
     }
 }
