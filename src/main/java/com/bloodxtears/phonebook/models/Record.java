@@ -30,11 +30,11 @@ public class Record {
     }
 
     private static boolean validatePhone(String phone){
-        return phone.matches("^\\+\\d{11}$");
+        return phone!=null && phone.matches("^\\+\\d{11}$");
     }
 
     private static boolean validateName(String name){
-        return name.matches("^([A-Z][a-z]+)( [A-Z][a-z]+)?$");
+        return name!=null && name.matches("^([A-Z][a-z]+)( [A-Z][a-z]+)?$");
     }
 
     @Override
