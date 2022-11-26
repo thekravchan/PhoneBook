@@ -1,5 +1,7 @@
 package com.bloodxtears.phonebook.models;
 
+import java.util.Map;
+
 public class Record {
     private String name;
     private String phone;
@@ -7,6 +9,11 @@ public class Record {
     public Record(String name, String phone) {
         setName(name);
         setPhone(phone);
+    }
+
+    public Record(Map<String,String> map) {
+        setName(map.get("name"));
+        setPhone(map.get("phone"));
     }
 
     public String getName() {
