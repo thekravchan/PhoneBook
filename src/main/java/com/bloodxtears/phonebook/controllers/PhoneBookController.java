@@ -1,6 +1,6 @@
 package com.bloodxtears.phonebook.controllers;
 
-import com.bloodxtears.phonebook.PhoneBookDao;
+import com.bloodxtears.phonebook.dao.PhoneBookDao;
 import com.bloodxtears.phonebook.models.Record;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
