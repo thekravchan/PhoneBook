@@ -1,4 +1,4 @@
-package com.bloodxtears.phonebook;
+package com.bloodxtears.phonebook.dao;
 
 import com.bloodxtears.phonebook.models.Record;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,5 +1,6 @@
 package com.bloodxtears.phonebook;
 
+import com.bloodxtears.phonebook.dao.PhoneBookDao;
 import com.bloodxtears.phonebook.models.Record;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
