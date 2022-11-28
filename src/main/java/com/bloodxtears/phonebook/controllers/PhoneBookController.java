@@ -14,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("phonebook")
+//TODO phonebook/records?
 public class PhoneBookController {
     private final PhoneBookDao phoneBook;
 
@@ -43,5 +44,36 @@ public class PhoneBookController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).header(HttpHeaders.LOCATION, resource).body(e.getMessage());
         }
+    }
+
+    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteHandler(@RequestParam Map<String,String> requestParam){
+        if (requestParam.isEmpty()) {
+            return deleteAllRecords();
+        } else if (requestParam.containsKey("name") && requestParam.containsKey("phone")){
+            return deleteRecord(requestParam.get("name"),requestParam.get("phone"));
+        } else {
+            return ResponseEntity.badRequest().body("Request not empty and not contain expected params!");
+        }
+    }
+
+    public ResponseEntity<?> deleteRecord(String name, String phone){
+        Record record;
+        try {
+            record = new Record(name, phone);
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        try {
+            phoneBook.remove(record);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(record);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> deleteAllRecords(){
+        phoneBook.clear();
+        return ResponseEntity.noContent().build();
     }
 }
