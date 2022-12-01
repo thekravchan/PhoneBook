@@ -46,6 +46,31 @@ public class PhoneBookController {
         }
     }
 
+    @PutMapping
+    public ResponseEntity<?> editRecord(@RequestParam Map<String,String> requestParam, @RequestBody Map<String,String> requestBody){
+        Record currentRecord, updatedRecord;
+        try {
+            updatedRecord = new Record(requestBody);
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body("Incorrect request body: " + e.getMessage());
+        }
+        if (requestParam.containsKey("name") && requestParam.containsKey("phone")){
+            try {
+                currentRecord = new Record(requestParam.get("name"),requestParam.get("phone"));
+            } catch (IllegalArgumentException e){
+                return ResponseEntity.badRequest().body("Incorrect request params: " + e.getMessage());
+            }
+        } else {
+            return ResponseEntity.badRequest().body("Request not empty and not contain expected params!");
+        }
+        try {
+            this.phoneBook.edit(currentRecord,updatedRecord);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(updatedRecord);
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteHandler(@RequestParam Map<String,String> requestParam){
         if (requestParam.isEmpty()) {
