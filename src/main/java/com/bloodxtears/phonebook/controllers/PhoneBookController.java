@@ -1,15 +1,19 @@
 package com.bloodxtears.phonebook.controllers;
 
+import com.bloodxtears.phonebook.AutoDeletableTempFile;
 import com.bloodxtears.phonebook.dao.PhoneBookDao;
 import com.bloodxtears.phonebook.models.Record;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 @RestController
@@ -100,5 +104,22 @@ public class PhoneBookController {
     public ResponseEntity<?> deleteAllRecords(){
         phoneBook.clear();
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<?> downloadFile(){
+        try {
+            AutoDeletableTempFile tempPhonebookFile = new AutoDeletableTempFile("phonebook", ".json");
+            phoneBook.writeFile(tempPhonebookFile.getFile());
+            Path path = Paths.get(tempPhonebookFile.getFile().getAbsolutePath());
+            Resource resource = new UrlResource(path.toUri());
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(MediaType.APPLICATION_JSON_VALUE))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
